@@ -31,6 +31,7 @@
 #include <geographic_msgs/GeoPointStamped.h>
 
 #include <mavros_msgs/HomePosition.h>
+#include <mavros_msgs/GpsInfo.h>
 
 namespace mavros {
 namespace std_plugins {
@@ -76,6 +77,7 @@ public:
 		raw_vel_pub = gp_nh.advertise<geometry_msgs::TwistStamped>("raw/gps_vel", 10);
 
 		// fused global position
+                gp_inf_pub = gp_nh.advertise<mavros_msgs::GpsInfo>("gps_info", 10);
 		gp_fix_pub = gp_nh.advertise<sensor_msgs::NavSatFix>("global", 10);
 		gp_odom_pub = gp_nh.advertise<nav_msgs::Odometry>("local", 10);
 		gp_rel_alt_pub = gp_nh.advertise<std_msgs::Float64>("rel_alt", 10);
@@ -115,6 +117,8 @@ private:
 	ros::Publisher gp_rel_alt_pub;
 	ros::Publisher gp_global_origin_pub;
 	ros::Publisher gp_global_offset_pub;
+
+        ros::Publisher gp_inf_pub;
 
 	ros::Subscriber gp_set_global_origin_sub;
 	ros::Subscriber hp_sub;
@@ -452,6 +456,12 @@ private:
 			stat.addf("EPV (m)", "%.2f", epv);
 		else
 			stat.add("EPV (m)", "Unknown");
+
+                mavros_msgs::GpsInfo info;
+                info.eph = eph;
+                info.epv = epv;
+                info.visible_sat_count = satellites_visible;
+                gp_inf_pub.publish(info);
 	}
 
 	/* -*- callbacks -*- */
