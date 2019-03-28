@@ -2,6 +2,41 @@
 Changelog for package mavros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.29.2 (2019-03-06)
+-------------------
+
+0.29.1 (2019-03-03)
+-------------------
+* All: catkin lint files
+* Update apm_config.yaml
+  Setting thrust_scaling in the setpoint_raw message (in my case, to use /mavros/setpoint_raw/attitude)
+  Without it, when using Gazebo, get the following problem
+  "Recieved thrust, but ignore_thrust is true: the most likely cause of this is a failure to specify the thrust_scaling parameters on px4/apm_config.yaml. Actuation will be ignored." from the function void attitude_cb in setpoint_raw.cpp (http://docs.ros.org/kinetic/api/mavros/html/setpoint__raw_8cpp_source.html)
+* cmake: fix `#1174 <https://github.com/mavlink/mavros/issues/1174>`_: add msg deps for package format 2
+* Issue `#1174 <https://github.com/mavlink/mavros/issues/1174>`_ Added dependency for mavros_msgs and mavros
+* Contributors: Adam Watkins, KiloNovemberDelta, Pierre Kancir, Vladimir Ermakov
+
+0.29.0 (2019-02-02)
+-------------------
+* Fix broken documentation URLs
+* px4_config: set the thrust_scaling to one by default
+* local_position: add an aditional topic for velocity on the local frame
+* Merge pull request `#1136 <https://github.com/mavlink/mavros/issues/1136>`_ from angri/param-timeout
+  Request timed up parameters as soon as possible
+* Merge branch 'master' into param-timeout
+* plugin:param added logging regarding rerequests
+* plugin:param fixed second and consequent timeouts in requesting list
+* mavros_extras: Wheel odometry plugin updated according to the final mavlink WHEEL_DISTANCE message.
+* mavros_extras: Wheel odometry plugin fixes after CR.
+* mavros_extras: Wheel odometry plugin added.
+* mavsys: add do_message_interval
+* sys_status: add set_message_interval service
+* lib: fix MAV_COMPONENT to_string
+* lib: update sensor orientations
+* plugin:param rerequest timed out parameters asap
+  Avoid vaiting for the next timeout
+* Contributors: Dr.-Ing. Amilcar do Carmo Lucas, Pavlo Kolomiiets, Randy Mackay, TSC21, Vladimir Ermakov, angri
+
 0.28.0 (2019-01-03)
 -------------------
 * plugin:param: publish new param value

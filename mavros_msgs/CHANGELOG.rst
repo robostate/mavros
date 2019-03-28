@@ -2,6 +2,28 @@
 Changelog for package mavros_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.29.2 (2019-03-06)
+-------------------
+
+0.29.1 (2019-03-03)
+-------------------
+* All: catkin lint files
+* mavros_msgs: Fix line endings for OpticalFlowRad message
+* Contributors: Pierre Kancir, sfalexrog
+
+0.29.0 (2019-02-02)
+-------------------
+* Fix broken documentation URLs
+* Merge branch 'master' into param-timeout
+* mavros_extras: Wheel odometry plugin updated according to the final mavlink WHEEL_DISTANCE message.
+* mavros_msgs: Float32ArrayStamped replaced by WheelOdomStamped.
+* mavros_msgs: Float32ArrayStamped message added.
+  For streaming timestamped data from FCU sensors (RPM, WHEEL_DISTANCE, etc.)
+* msgs: Fix message id type, mavlink v2 uses 24 bit msg ids
+* mavros_msgs: add MessageInterval.srv to CMakeLists
+* sys_status: add set_message_interval service
+* Contributors: Dr.-Ing. Amilcar do Carmo Lucas, Pavlo Kolomiiets, Randy Mackay, Vladimir Ermakov
+
 0.28.0 (2019-01-03)
 -------------------
 * plugin:param: publish new param value
