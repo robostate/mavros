@@ -1,152 +1,81 @@
 MAVROS
 ======
 
-MAVLink extendable communication node for ROS
-with proxy for Ground Control Station (e.g. [QGroundControl][1]).
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mavlink/mavros?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-ROS API documentation moved to [wiki.ros.org][9].
+MAVLink extendable communication node for ROS.
 
-
-Feutures
---------
-
-  - Communication with autopilot via serial port, UDP or TCP (e.g. [ArduPilot][2])
-  - Internal proxy for Ground Control Station (serial, UDP, TCP)
-  - [mavlink\_ros][3] compatible ROS topics (Mavlink.msg)
-  - Plugin system for ROS-MAVLink translation
-  - Parameter manipulation tool
-  - Waypoint manipulation tool
-
-
-Limitations
------------
-
-Only for linux. Depends on [Boost library][4] >= 1.46 (hydro on 12.04).
-Catkin build system required (tested with ROS Hydro Medusa and Indigo Igloo).
-
-This package are dependent on ros-\*-mavlink build from [mavlink-gbp-release][7].
-Since 2014-06-19 it exists in hydro and indigo package index (so you can install via rosdep).
-
-Also since 0.7.0 (and [#54][11]) it depends on [libev-dev][10] system package (resolved by rosdep).
+- Since 2014-08-11 this repository contains several packages.
+- Since 2014-11-02 hydro support separated from master to hydro-devel branch.
+- Since 2015-03-04 all packages also dual licensed under terms of BSD license.
+- Since 2015-08-10 all messages moved to mavros\_msgs package
+- Since 2016-02-05 (v0.17) frame conversion changed again
+- Since 2016-06-22 (pre v0.18) Indigo and Jade separated from master to indigo-devel branch.
+- Since 2016-06-23 (0.18.0) support MAVLink 2.0 without signing.
+- Since 2017-08-23 (0.20.0) [GeographicLib][geolib] and it's datasets are required. Used to convert AMSL (FCU) and WGS84 (ROS) altitudes.
+- Since 2018-05-11 (0.25.0) support building master for Indigo and Jade stopped. Mainly because update of console-bridge package.
+- Since 2018-05-14 (0.25.1) support for Indigo returned. We use compatibility layer for console-bridge.
+- Since 2019-01-03 (0.28.0) support for Indigo by master not guaranteed. Consider update to more recent distro.
 
 
-Connection URL
+mavros package
 --------------
 
-*New in 0.7.0*. Connection now defined by URL,
-you can use any supported type for FCU and GCS.
-
-Supported schemas:
-
-  - Serial: `/path/to/serial/device[:baudrate]`
-  - Serial: `serial:///path/to/serial/device[:baudrate][?ids=sysid,compid]`
-  - UDP: `udp://[bind_host[:port]]@[remote_host[:port]][/?ids=sysid,compid]`
-  - TCP client: `tcp://[server_host][:port][/?ids=sysid,compid]`
-  - TCP server: `tcp-l://[bind_port][:port][/?ids=sysid,compid]`
-
-Note: ids from URL overrides ids given by parameters.
-
-Programs
---------
-
-### mavros\_node -- main communication node
-
-Main node. Allow disable GCS proxy by setting empty URL.
-
-Run example:
-
-    rosrun mavros mavros_node _fcu_url:=/dev/ttyACM0:115200 _gcs_url:=tcp-l://
+It is the main package, please see its [README][mrrm].
+Here you may read [installation instructions][inst].
 
 
-### gcs\_bridge -- additional UDP proxy
+mavros\_extras package
+----------------------
 
-Allows you to add a channel for GCS.
-For example if you need to connect one GCS for HIL and the second on the tablet.
-
-Previous name: `ros_udp`.
-
-Example (HIL & DroidPlanner):
-
-    rosrun mavros mavros_node _gcs_url:='udp://:14556@hil-host:14551' &
-    rosrun mavros gcs_bridge _gcs_url:='udp://@nexus7'
+This package contains some extra nodes and plugins for mavros, please see its [README][exrm].
 
 
-### mavparam -- parameter manipulation
+libmavconn package
+------------------
 
-Just see `--help`.
-
-Examples:
-
-    rosrun mavros mavparam dump /tmp/apm.param
-    rosrun mavros mavparam load /tmp/apm2.param
+This package contain mavconn library, see its [README][libmc].
+LibMAVConn may be used outside of ROS environment.
 
 
-### mavwp -- mission manipulation
+test\_mavros package
+--------------------
 
-See `--help`.
-
-Examples:
-
-    rosrun mavros mavwp show -p
-    rosrun mavros dump /tmp/mission.txt
+This package contain hand-tests and [manual page][test] for APM and PX4 SITL.
+Please see [README][test] first!
 
 
-### mavsafety -- safety tool
+mavros\_msgs package
+--------------------
 
-See `--help`.
-
-Examples:
-
-    rosrun mavros mavsafety arm
-    rosrun mavros mavsafety disarm
+This package contains messages and services used in mavros.
 
 
-Installation
-------------
+Support forums and chats
+------------------------
 
-Use `wstool` utility for installation. In your workspace do:
+Please ask your questions not related to bugs/feauture or requests on:
 
-    wstool set -t src mavros --git https://github.com/vooon/mavros.git
-    wstool update -t src
-    rosdep install --from-paths src --ignore-src --rosdistro hydro -y
+- [px4users Google Group (Mailing List) ](https://groups.google.com/forum/#!forum/px4users)
+- [Mavros on Gitter IM](https://gitter.im/mavlink/mavros)
+- [PX4/Firmware on Gitter IM](https://gitter.im/PX4/Firmware)
+- [ArduPilot/VisionProjects on Gitter IM](https://gitter.im/ArduPilot/ardupilot/VisionProjects)
 
-Then use regular `catkin_make` for build and install.
-Notes: since v0.5 (and [#35][8]) mavlink submodule moved to special ROS 3rd party package [ros-\*-mavlink][7].
-
-
-### Installing ros-\*-mavlink from source
-
-If rosdep could not install mavlink library, you could install it from source:
-
-    mkdir -p ~/ros_deps/src
-    cd ~/ros_deps
-    rosinstall_generator mavlink | tee rosinstall.yaml
-    wstool init src ./rosinstall.yaml
-    catkin_make_isolated --install-space $ROSINSTALL --install -DCMAKE_BUILD_TYPE=Release
-
-$ROSINSTALL must be writable for user or you can add `sudo -s` to last command.
-Or you could build debian package by pulling right bloom branch from [mavlink-gbp-release][7]
-(common naming: `debian/<rosdistro>/<osdistro>/<package>`) using `dh binary`.
+We'd like to keep the project bugtracker as free as possible, so please contact via the above methods. You can also PM us via Gitter.
 
 
-Links
------
+CI Statuses
+-----------
 
-  * [MAVLink][5] -- communication protocol
-  * [mavlink\_ros][3] -- original ROS node (few messages, no proxy)
-  * [ArduPilot][2] -- tested autopilot APM:Plane (default command set)
-  * [QGroundControl][1] -- tested ground control station for linux
-  * [DroidPlanner][6] -- tested GCS for Android
+  - ROS Kinetic: [![Build Status](http://build.ros.org/buildStatus/icon?job=Kdev__mavros__ubuntu_xenial_amd64)](http://build.ros.org/job/Kdev__mavros__ubuntu_xenial_amd64/)
+  - ROS Lunar: [![Build Status](http://build.ros.org/buildStatus/icon?job=Ldev__mavros__ubuntu_xenial_amd64)](http://build.ros.org/job/Ldev__mavros__ubuntu_xenial_amd64/)
+  - ROS Melodic: [![Build Status](http://build.ros.org/buildStatus/icon?job=Mdev__mavros__ubuntu_bionic_amd64)](http://build.ros.org/job/Mdev__mavros__ubuntu_bionic_amd64/)
+  - Travis master: [![travis status](https://travis-ci.org/mavlink/mavros.svg?branch=master)](https://travis-ci.org/mavlink/mavros)
 
 
-[1]: http://qgroundcontrol.org/
-[2]: http://ardupilot.com/
-[3]: https://github.com/mavlink/mavlink_ros
-[4]: http://www.boost.org/
-[5]: http://mavlink.org/mavlink/start
-[6]: https://github.com/arthurbenemann/droidplanner/
-[7]: https://github.com/vooon/mavlink-gbp-release
-[8]: https://github.com/vooon/mavros/issues/35
-[9]: http://wiki.ros.org/mavros
-[10]: http://software.schmorp.de/pkg/libev
-[11]: https://github.com/vooon/mavros/issues/54
+[mrrm]: https://github.com/mavlink/mavros/blob/master/mavros/README.md
+[exrm]: https://github.com/mavlink/mavros/blob/master/mavros_extras/README.md
+[libmc]: https://github.com/mavlink/mavros/blob/master/libmavconn/README.md
+[test]: https://github.com/mavlink/mavros/blob/master/test_mavros/README.md
+[inst]: https://github.com/mavlink/mavros/blob/master/mavros/README.md#installation
+[geolib]: https://geographiclib.sourceforge.io/
